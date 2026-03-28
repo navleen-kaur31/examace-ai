@@ -1,0 +1,24 @@
+spec_version: "0.1.0"
+name: examace-ai
+version: 2.0.0
+description: "AI-powered exam assistant that generates notes, analyzes PYQs, evaluates answers, detects weaknesses, and creates study plans"
+
+model:
+  preferred: claude-sonnet-4-5
+
+skills:
+  - notes-generator
+  - answer-evaluator
+  - pyq-analyzer
+  - lecture-to-notes
+  - mcq-practice
+  - study-planner
+  - weakness-detector
+  - answer-enhancer
+  - diagram-generator
+
+tags:
+  - education
+  - exam-prep
+  - ai-agent
+  - students
