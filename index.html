@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ExamAce AI</title>
+
+  <style>
+    body {
+      font-family: Arial;
+      background: #0f172a;
+      color: white;
+      text-align: center;
+      padding: 30px;
+    }
+
+    h1 { color: #38bdf8; }
+
+    select, input, button {
+      padding: 12px;
+      margin: 10px;
+      border-radius: 10px;
+      border: none;
+      font-size: 16px;
+    }
+
+    input {
+      width: 300px;
+    }
+
+    button {
+      background: #38bdf8;
+      color: black;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background: #0ea5e9;
+    }
+
+    pre {
+      background: #1e293b;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: left;
+      max-width: 700px;
+      margin: 20px auto;
+      white-space: pre-wrap;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>🤖 ExamAce AI</h1>
+<p>Your Smart Exam Companion 🚀</p>
+
+<!-- 🔽 TYPE SELECT -->
+<select id="type">
+  <option value="notes">📘 Notes</option>
+  <option value="pyq">📊 PYQ</option>
+  <option value="plan">📅 Study Plan</option>
+  <option value="evaluate">✍️ Evaluate</option>
+  <option value="enhance">✨ Enhance</option>
+</select>
+
+<br>
+
+<!-- 🔽 INPUT -->
+<input id="input" placeholder="Enter topic or answer..." />
+
+<br>
+
+<!-- 🔽 BUTTON -->
+<button onclick="send()">Ask AI</button>
+
+<!-- 🔽 OUTPUT -->
+<pre id="output">✨ Output will appear here...</pre>
+
+<script>
+async function send() {
+  const type = document.getElementById("type").value;
+  const input = document.getElementById("input").value;
+
+  if (!input) {
+    alert("Enter something bro 😭");
+    return;
+  }
+
+  const outputBox = document.getElementById("output");
+  outputBox.innerText = "⏳ Thinking...";
+
+  try {
+    const res = await fetch("http://localhost:3000/ask", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ type, input })
+    });
+
+    const data = await res.json();
+
+    outputBox.innerText = data.reply;
+
+  } catch (err) {
+    outputBox.innerText = "❌ Error connecting to server";
+  }
+}
+</script>
+
+</body>
+</html>

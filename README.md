@@ -46,3 +46,72 @@ This project solves real student problems:
 - Exam preparation
 - Answer writing
 - Time management
+---
+
+## 🧪 Sample Outputs (Demo)
+
+### 📘 Topic → Notes
+
+**Input:**
+Explain IP Addressing
+
+**Output:**
+- Definition: IP Address is a unique identifier for devices on a network
+- Types:
+  - Classful Addressing
+  - Classless Addressing
+- Diagram:
+  IP Address
+   ├── Network ID
+   └── Host ID
+
+---
+
+### 📊 PYQ Analyzer
+
+**Input:**
+List of previous year questions
+
+**Output:**
+- Unit 1: IP Addressing (10 questions)
+- Unit 2: Subnetting (15 questions) 🔥 Most Important
+- Unit 3: Routing (5 questions)
+
+---
+
+### 📅 Study Planner
+
+**Input:**
+5 days left for exam (Computer Networks)
+
+**Output:**
+Day 1: IP Addressing + Notes  
+Day 2: Subnetting + Practice  
+Day 3: Routing + PYQs  
+Day 4: Revision  
+Day 5: Mock Test  
+
+---
+
+### ✍️ Answer Evaluation
+
+**Input:**
+Student answer
+
+**Output:**
+- Marks: 6/10  
+- Missing points: Classless addressing  
+- Improvement: Add diagram and examples  
+
+---
+
+### ✨ Answer Enhancement
+
+**Input:**
+Rough answer
+
+**Output:**
+- Structured answer with headings  
+- Added keywords  
+- Diagram included  
+- Ready for full marks  
