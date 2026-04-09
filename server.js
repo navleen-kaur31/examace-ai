@@ -2,26 +2,25 @@ require("dotenv").config();
 
 const express = require("express");
 const cors = require("cors");
-const OpenAI = require("openai");
+const Groq = require("groq-sdk");
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// ✅ OpenAI client
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+// ✅ Groq client
+const groq = new Groq({
+  apiKey: process.env.GROQ_API_KEY,
 });
 
-// 🎯 MAIN ROUTE
 app.post("/ask", async (req, res) => {
   try {
     const { type, input } = req.body;
 
     let prompt = "";
 
-    // 🧠 Agent brain
-    if (type === "Notes") {
+    // 🧠 AI Agent logic
+    if (type === "notes") {
       prompt = `
 Create topper-level exam notes on "${input}".
 
@@ -37,26 +36,30 @@ Include:
 Style:
 - Structured
 - Bullet points
-- Highlight keywords
-- Simple Punjabi-English mix
-
-Make it exam-ready.
+- Simple language
+- Exam ready
 `;
     }
 
-    else if (type === "MCQ") {
+    else if (type === "pyq") {
       prompt = `
-Generate 5 MCQs on "${input}".
+Analyze previous year questions of "${input}".
 
-Include:
-- Question
-- 4 options
-- Correct answer
-- Explanation
+Give:
+- Important topics
+- Repeated patterns
+- Expected questions
 `;
     }
 
-    else if (type === "Evaluate") {
+    else if (type === "plan") {
+      prompt = `
+Create a 7-day study plan for "${input}".
+Make it practical and exam-focused.
+`;
+    }
+
+    else if (type === "evaluate") {
       prompt = `
 Evaluate this answer like an examiner:
 
@@ -69,21 +72,16 @@ Give:
 `;
     }
 
-    else if (type === "Plan") {
+    else if (type === "enhance") {
       prompt = `
-Create a 7-day study plan for "${input}".
-Make it practical and exam-focused.
-`;
-    }
+Improve this answer to score full marks:
 
-    else if (type === "PYQ") {
-      prompt = `
-Analyze PYQs of "${input}".
+${input}
 
-Give:
-- Important topics
-- Repeated patterns
-- Expected questions
+Add:
+- Structure
+- Keywords
+- Better explanation
 `;
     }
 
@@ -91,15 +89,20 @@ Give:
       prompt = `Explain "${input}" clearly for exams.`;
     }
 
-    // 🚀 OpenAI call (NEW API)
-    const response = await client.responses.create({
-      model: "gpt-4.1-mini",
-      input: prompt,
+    // 🚀 Groq API call
+    const chatCompletion = await groq.chat.completions.create({
+      model: "llama-3.1-8b-instant",
+      messages: [
+        {
+          role: "user",
+          content: prompt,
+        },
+      ],
     });
 
-    const text = response.output[0].content[0].text;
+    const reply = chatCompletion.choices[0].message.content;
 
-    res.json({ reply: text });
+    res.json({ reply });
 
   } catch (error) {
     console.error(error);
@@ -107,7 +110,6 @@ Give:
   }
 });
 
-// 🚀 start server
 app.listen(3000, () => {
   console.log("🚀 ExamAce AI running on http://localhost:3000");
 });
