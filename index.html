@@ -1,112 +1,677 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>ExamAce AI</title>
+<title>ExamAce AI</title>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
-  <style>
-    body {
-      font-family: Arial;
-      background: #0f172a;
-      color: white;
-      text-align: center;
-      padding: 30px;
-    }
+<style>
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  font-family:'Segoe UI',sans-serif;
+  background:
+    radial-gradient(circle at top left,#2563eb,#0f172a 45%),
+    radial-gradient(circle at bottom right,#06b6d4,#0f172a 35%);
+  color:white;
+  min-height:100vh;
+}
+.app{display:flex;min-height:100vh;}
 
-    h1 { color: #38bdf8; }
+.sidebar{
+  width:310px;
+  background:rgba(15,23,42,.88);
+  backdrop-filter:blur(20px);
+  padding:20px;
+  border-right:1px solid rgba(255,255,255,.08);
+  overflow-y:auto;
+  transition:.3s;
+}
+.sidebar.collapsed{
+  width:70px;
+  overflow:hidden;
+}
+.sidebar h2{margin-top:0;color:#38bdf8;}
 
-    select, input, button {
-      padding: 12px;
-      margin: 10px;
-      border-radius: 10px;
-      border: none;
-      font-size: 16px;
-    }
+.history-search{
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:12px;
+  margin-bottom:12px;
+}
+.sidebar-toggle{
+  width:100%;
+  margin-bottom:12px;
+}
+.history-tabs{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-bottom:14px;
+}
+.tab-btn{
+  padding:6px 10px;
+  font-size:.75rem;
+  border-radius:999px;
+  background:rgba(255,255,255,.08);
+  cursor:pointer;
+}
+.tab-btn.active{background:#38bdf8;}
 
-    input {
-      width: 300px;
-    }
+.history-item{
+  padding:14px;
+  margin:12px 0;
+  border-radius:14px;
+  background:rgba(255,255,255,.05);
+  cursor:pointer;
+}
+.history-item:hover{
+  background:rgba(56,189,248,.15);
+}
+.history-title{font-weight:700;}
+.history-meta{
+  font-size:.72rem;
+  color:#94a3b8;
+  margin-top:4px;
+}
+.history-actions{
+  margin-top:8px;
+  display:flex;
+  gap:8px;
+}
+.small-btn{
+  padding:5px 8px;
+  font-size:.72rem;
+  border-radius:8px;
+}
 
-    button {
-      background: #38bdf8;
-      color: black;
-      cursor: pointer;
-      font-weight: bold;
-    }
+.main{flex:1;padding:30px;}
+.container{max-width:1100px;margin:auto;}
 
-    button:hover {
-      background: #0ea5e9;
-    }
+h1{text-align:center;font-size:3rem;margin-bottom:8px;}
+.subtitle{text-align:center;color:#cbd5e1;margin-bottom:30px;}
 
-    pre {
-      background: #1e293b;
-      padding: 20px;
-      border-radius: 12px;
-      text-align: left;
-      max-width: 700px;
-      margin: 20px auto;
-      white-space: pre-wrap;
-      line-height: 1.5;
-    }
-  </style>
+.glass-card{
+  background:rgba(255,255,255,.08);
+  backdrop-filter:blur(18px);
+  border:1px solid rgba(255,255,255,.15);
+  border-radius:24px;
+  padding:24px;
+  margin-bottom:25px;
+  box-shadow:0 15px 40px rgba(0,0,0,.35);
+}
+
+input,textarea,select{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:14px;
+  margin:10px 0;
+  outline:none;
+}
+
+button{
+  padding:12px 18px;
+  border:none;
+  border-radius:12px;
+  cursor:pointer;
+  font-weight:700;
+  color:white;
+  background:linear-gradient(135deg,#38bdf8,#0ea5e9);
+  margin:5px;
+}
+button:hover{
+  transform:translateY(-2px);
+}
+
+.study-card{
+  margin-top:18px;
+  padding:22px;
+  border-radius:18px;
+  background:rgba(255,255,255,.05);
+  border-left:4px solid #38bdf8;
+}
+.study-title{
+  font-size:1.15rem;
+  font-weight:700;
+  color:#38bdf8;
+  margin-bottom:12px;
+}
+
+.mcq-block{
+  margin-bottom:22px;
+  padding:18px;
+  border-radius:14px;
+  background:rgba(255,255,255,0.04);
+}
+.mcq-option{
+  margin:8px 0;
+  padding:10px;
+  border-radius:10px;
+  background:rgba(255,255,255,.05);
+  cursor:pointer;
+}
+.correct{background:rgba(34,197,94,.25)!important;}
+.wrong{background:rgba(239,68,68,.25)!important;}
+
+.chat-user,.chat-ai{
+  padding:14px;
+  border-radius:14px;
+  margin:10px 0;
+  max-width:80%;
+}
+.chat-user{
+  background:#0ea5e9;
+  margin-left:auto;
+}
+.chat-ai{
+  background:rgba(255,255,255,.08);
+}
+</style>
 </head>
-
 <body>
 
-<h1>🤖 ExamAce AI</h1>
-<p>Your Smart Exam Companion 🚀</p>
+<div class="app">
 
-<!-- 🔽 TYPE SELECT -->
-<select id="type">
-  <option value="notes">📘 Notes</option>
-  <option value="pyq">📊 PYQ</option>
-  <option value="plan">📅 Study Plan</option>
-  <option value="evaluate">✍️ Evaluate</option>
-  <option value="enhance">✨ Enhance</option>
+<div class="sidebar" id="sidebar">
+<button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+
+<h2>📚 History</h2>
+
+<input class="history-search" id="historySearch" placeholder="Search..." oninput="renderHistory()">
+
+<div class="history-tabs">
+  <div class="tab-btn active" onclick="setFilter('all',this)">All</div>
+  <div class="tab-btn" onclick="setFilter('notes',this)">Notes</div>
+  <div class="tab-btn" onclick="setFilter('mcq',this)">MCQ</div>
+  <div class="tab-btn" onclick="setFilter('pyq',this)">PYQ</div>
+  <div class="tab-btn" onclick="setFilter('plan',this)">Plan</div>
+  <div class="tab-btn" onclick="setFilter('eval',this)">Eval</div>
+</div>
+
+<div id="historyList"></div>
+</div>
+
+<div class="main">
+<div class="container">
+
+<h1>🤖 ExamAce AI</h1>
+<div class="subtitle">Your Smart Exam Companion 🚀</div>
+
+<div class="glass-card">
+<select id="type" onchange="toggleFields()">
+<option value="notes">📘 Notes Generator</option>
+<option value="pyq">📊 PYQ Analyzer</option>
+<option value="plan">📅 Study Planner</option>
+<option value="evaluate">✍️ Evaluate Answer</option>
 </select>
 
-<br>
+<div id="normalInput">
+<input id="input" placeholder="Enter Topic / Prompt">
+</div>
 
-<!-- 🔽 INPUT -->
-<input id="input" placeholder="Enter topic or answer..." />
+<div id="evaluateFields" style="display:none;">
+<input id="evalQuestion" placeholder="Enter Question">
+<input id="evalMarks" type="number" placeholder="Enter Marks">
+<textarea id="evalAnswer" rows="8"></textarea>
+</div>
 
-<br>
+<div id="plannerFields" style="display:none;">
+<textarea id="plannerTasks" placeholder="Pending Tasks"></textarea>
+<textarea id="plannerSyllabus" placeholder="Syllabus"></textarea>
+<input id="plannerDays" type="number" placeholder="Days Until Exam">
+<input id="plannerHours" type="number" placeholder="Daily Study Hours">
+</div>
 
-<!-- 🔽 BUTTON -->
+<div id="pyqFields" style="display:none;">
+<input type="file" id="pyqFile" multiple accept=".pdf,image/*">
+<input id="pyqTopics" placeholder="Enter Topic(s)">
+</div>
+
 <button onclick="send()">Ask AI</button>
+<button onclick="saveCurrent()">⭐ Save Important</button>
+<button onclick="exportPDF()">📄 Export PDF</button>
+</div>
 
-<!-- 🔽 OUTPUT -->
-<pre id="output">✨ Output will appear here...</pre>
+<div class="glass-card">
+<div id="output">Output will appear here...</div>
+</div>
+
+<div class="glass-card" id="notesToolsCard" style="display:none;">
+<div id="notesTools">
+
+<button onclick="generateMCQ()">Generate MCQs</button>
+<button onclick="generateQuestions()">Generate Questions</button>
+<button onclick="expandNotes()">Explain Further</button>
+<button onclick="generateFlashcards()">Flashcards</button>
+<button onclick="generateRevision()">Revision Sheet</button>
+<button onclick="generateMnemonics()">Mnemonics</button>
+
+<input id="topicQuestionInput" placeholder="Ask any doubt...">
+<button onclick="askTopic()">Ask Question</button>
+
+<input id="teacherChatInput" placeholder="Explain like a teacher...">
+<button onclick="teacherChat()">🎓 Teacher Mode</button>
+
+</div>
+</div>
+
+</div>
+</div>
+</div>
 
 <script>
-async function send() {
-  const type = document.getElementById("type").value;
-  const input = document.getElementById("input").value;
+let lastTopic="";
+let currentOutputHTML="";
+let historyFilter="all";
+let mcqHistory="";
+let notesContent="";
 
-  if (!input) {
-    alert("Enter something bro 😭");
+function toggleSidebar(){
+  sidebar.classList.toggle("collapsed");
+}
+
+function setFilter(filter,el){
+  historyFilter=filter;
+  document.querySelectorAll(".tab-btn").forEach(btn=>btn.classList.remove("active"));
+  el.classList.add("active");
+  renderHistory();
+}
+
+function detectCategory(title){
+  title=title.toLowerCase();
+  if(title.includes("mcq")) return "mcq";
+  if(title.includes("pyq")) return "pyq";
+  if(title.includes("plan")) return "plan";
+  if(title.includes("eval")) return "eval";
+  return "notes";
+}
+
+function saveToHistory(title,content,pinned=false){
+  let history=JSON.parse(localStorage.getItem("examaceHistory")||"[]");
+
+  history.unshift({
+    title,content,pinned,
+    time:new Date().toLocaleString(),
+    category:detectCategory(title)
+  });
+
+  history=history.slice(0,40);
+  localStorage.setItem("examaceHistory",JSON.stringify(history));
+  renderHistory();
+}
+
+function saveCurrent(){
+  if(!currentOutputHTML)return;
+  saveToHistory("Saved Session",currentOutputHTML,true);
+}
+function stripHtml(html){
+  const div = document.createElement("div");
+  div.innerHTML = html;
+  return div.textContent || div.innerText || "";
+}
+function renderHistory() {
+  const history = JSON.parse(localStorage.getItem("examaceHistory") || "[]");
+  const search = historySearch.value.toLowerCase();
+
+  historyList.innerHTML = "";
+
+  history
+    .sort((a, b) => (b.pinned || false) - (a.pinned || false))
+    .forEach((item, index) => {
+      if (historyFilter !== "all" && item.category !== historyFilter) return;
+      if (!item.title.toLowerCase().includes(search)) return;
+
+      const safeTitle =
+        item.title.length > 40
+          ? item.title.substring(0, 40) + "..."
+          : item.title;
+
+      historyList.innerHTML += `
+  <div class="history-item" data-index="${index}">
+    <div class="history-title">${item.pinned ? "📌 " : ""}${item.title}</div>
+
+    <div class="history-meta">
+      ${((item.category || "notes").toUpperCase())} • ${item.time || ""}
+    </div>
+
+    <div class="history-preview">
+      ${stripHtml(item.content)
+        .replace(/\\n/g, " ")
+        .replace(/\s+/g, " ")
+        .trim()
+        .slice(0, 80)}...
+    </div>
+
+    <div class="history-actions">
+      <button class="small-btn" onclick="event.stopPropagation();pinHistory(${index})">📌</button>
+      <button class="small-btn" onclick="event.stopPropagation();deleteHistory(${index})">🗑</button>
+    </div>
+  </div>
+`;
+    });
+    document.querySelectorAll(".history-item").forEach(card => {
+  card.addEventListener("click", () => {
+    const idx = card.dataset.index;
+    const history = JSON.parse(localStorage.getItem("examaceHistory") || "[]");
+    loadHistory(history[idx].content);
+  });
+});
+}
+
+function pinHistory(index){
+  let history=JSON.parse(localStorage.getItem("examaceHistory")||"[]");
+  history[index].pinned=!history[index].pinned;
+  localStorage.setItem("examaceHistory",JSON.stringify(history));
+  renderHistory();
+}
+
+function deleteHistory(index){
+  let history=JSON.parse(localStorage.getItem("examaceHistory")||"[]");
+  history.splice(index,1);
+  localStorage.setItem("examaceHistory",JSON.stringify(history));
+  renderHistory();
+}
+
+function loadHistory(content){
+  output.innerHTML=content;
+  currentOutputHTML=content;
+}
+
+function exportPDF(){
+  window.print();
+}
+
+function addCard(title,content){
+  const html=`
+    <div class="study-card">
+      <div class="study-title">${title}</div>
+      ${marked.parse(content)}
+    </div>
+  `;
+  output.innerHTML+=html;
+  currentOutputHTML=output.innerHTML;
+}
+
+function toggleFields(){
+  const t=type.value;
+  normalInput.style.display=t==="notes"?"block":"none";
+  evaluateFields.style.display=t==="evaluate"?"block":"none";
+  plannerFields.style.display=t==="plan"?"block":"none";
+  pyqFields.style.display=t==="pyq"?"block":"none";
+
+  document.getElementById("notesToolsCard").style.display="none";
+}
+
+async function send(){
+  const selectedType=type.value;
+  output.innerHTML="🤖 Thinking...";
+
+  if(selectedType==="notes"){
+    lastTopic=input.value;
+    output.innerHTML="";
+    mcqHistory="";
+
+    const res=await fetch("http://localhost:3000/ask",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({type:"notes",input:lastTopic})
+    });
+
+    const data=await res.json();
+
+    notesContent=data.reply;
+    addCard("📘 Notes",data.reply);
+
+    document.getElementById("notesToolsCard").style.display="block";
+
+    saveToHistory(lastTopic+" Notes",output.innerHTML);
     return;
   }
 
-  const outputBox = document.getElementById("output");
-  outputBox.innerText = "⏳ Thinking...";
-
-  try {
-    const res = await fetch("http://localhost:3000/ask", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ type, input })
+  if(selectedType==="evaluate"){
+    const res=await fetch("http://localhost:3000/ask",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        type:"evaluate",
+        question:evalQuestion.value,
+        marks:evalMarks.value,
+        answer:evalAnswer.value
+      })
     });
 
-    const data = await res.json();
+    const data=await res.json();
+    output.innerHTML=marked.parse(data.reply);
+    currentOutputHTML=output.innerHTML;
+    saveToHistory("Evaluation",output.innerHTML);
+    return;
+  }
 
-    outputBox.innerText = data.reply;
+  if(selectedType==="plan"){
+    const res=await fetch("http://localhost:3000/ask",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        type:"plan",
+        tasks:plannerTasks.value,
+        syllabus:plannerSyllabus.value,
+        days:plannerDays.value,
+        hours:plannerHours.value
+      })
+    });
 
-  } catch (err) {
-    outputBox.innerText = "❌ Error connecting to server";
+    const data=await res.json();
+    output.innerHTML=marked.parse(data.reply);
+    currentOutputHTML=output.innerHTML;
+    saveToHistory("Study Plan",output.innerHTML);
+    return;
+  }
+
+  if(selectedType==="pyq"){
+    const formData=new FormData();
+    for(const file of pyqFile.files) formData.append("files",file);
+    formData.append("topics",pyqTopics.value);
+
+    const res=await fetch("http://localhost:3000/upload-pyq",{
+      method:"POST",
+      body:formData
+    });
+
+    const data=await res.json();
+    output.innerHTML=marked.parse(data.reply);
+    currentOutputHTML=output.innerHTML;
+    saveToHistory("PYQ Analysis",output.innerHTML);
   }
 }
+async function generateMCQ() {
+  const res = await fetch("http://localhost:3000/ask", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      type: "mcq",
+      input: lastTopic,
+      previous: mcqHistory
+    })
+  });
+
+  const data = await res.json();
+
+  mcqHistory += data.reply;
+
+  renderMCQSelfTest(data.reply);
+
+  saveToHistory(lastTopic + " MCQs", output.innerHTML);
+}
+
+function renderMCQSelfTest(raw) {
+  const lines = raw.split("\n");
+
+  let html = `
+    <div class="study-card">
+      <div class="study-title">📝 MCQs</div>
+  `;
+
+  let q = "", opts = [], ans = "", exp = "";
+
+  function flush() {
+    if (!q) return;
+
+    html += `
+      <div class="mcq-block">
+        <div><strong>${q}</strong></div>
+    `;
+
+    opts.forEach(opt => {
+      html += `
+        <div class="mcq-option"
+          onclick="checkMCQ(this,'${ans.replace("Answer: ", "").trim()}')">
+          ${opt}
+        </div>
+      `;
+    });
+
+    html += `
+        <div style="display:none" class="mcq-exp">${exp}</div>
+      </div>
+    `;
+
+    q = "";
+    opts = [];
+    ans = "";
+    exp = "";
+  }
+
+  for (const line of lines) {
+    const t = line.trim();
+
+    if (/^\d+\./.test(t)) {
+      flush();
+      q = t;
+    }
+    else if (/^[A-D]\./.test(t)) {
+      opts.push(t);
+    }
+    else if (t.startsWith("Answer:")) {
+      ans = t;
+    }
+    else if (t.startsWith("Explanation:")) {
+      exp = t;
+    }
+  }
+
+  flush();
+
+  html += `</div>`;
+
+  output.innerHTML += html;
+  currentOutputHTML = output.innerHTML;
+}
+
+function checkMCQ(el, correct) {
+  const chosen = el.innerText.charAt(0);
+
+  if (chosen === correct) {
+    el.classList.add("correct");
+  } else {
+    el.classList.add("wrong");
+  }
+}
+
+async function generateQuestions() {
+  await callSimple("questions", "❓ Questions");
+}
+
+async function expandNotes() {
+  await callSimple("expand", "📚 Expanded Notes", notesContent);
+}
+
+async function generateFlashcards() {
+  await callSimple("flashcards", "🃏 Flashcards");
+}
+
+async function generateRevision() {
+  await callSimple("revision", "📄 Revision Sheet");
+}
+
+async function generateMnemonics() {
+  await callSimple("mnemonics", "🧠 Mnemonics");
+}
+
+async function callSimple(type, title, previous = "") {
+  const res = await fetch("http://localhost:3000/ask", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      type,
+      input: lastTopic,
+      previous
+    })
+  });
+
+  const data = await res.json();
+
+  addCard(title, data.reply);
+
+  saveToHistory(lastTopic + " " + title, output.innerHTML);
+}
+
+async function askTopic() {
+  const q = topicQuestionInput.value;
+
+  const res = await fetch("http://localhost:3000/ask", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      type: "askTopic",
+      input: lastTopic,
+      question: q
+    })
+  });
+
+  const data = await res.json();
+
+  addCard("💬 Answer", data.reply);
+
+  topicQuestionInput.value = "";
+}
+
+async function teacherChat() {
+  const q = teacherChatInput.value;
+
+  const res = await fetch("http://localhost:3000/ask", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      type: "teacherChat",
+      input: lastTopic,
+      question: q
+    })
+  });
+
+  const data = await res.json();
+
+  output.innerHTML += `
+    <div class="chat-box">
+      <div class="chat-user">${q}</div>
+      <div class="chat-ai">${marked.parse(data.reply)}</div>
+    </div>
+  `;
+
+  currentOutputHTML = output.innerHTML;
+
+  teacherChatInput.value = "";
+}
+renderHistory();
+toggleFields();
 </script>
 
 </body>
