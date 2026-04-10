@@ -1,117 +1,182 @@
-# 🚀 ExamAce AI – Smart Notes + Exam Coach
+🚀 ExamAce AI
 
-## 💡 Overview
-ExamAce AI is an AI agent that helps students prepare for exams by generating notes, analyzing PYQs, practicing questions, evaluating answers, and creating study plans.
-
----
-
-## ✨ Features
-
-### 📘 Notes Generator
-- Converts topics into structured notes
-- Includes diagrams and key points
-
-### 📊 PYQ Analyzer
-- Classifies questions by topic
-- Identifies important areas
-
-### 🧪 MCQ Practice
-- Topic-based MCQs with explanations
-
-### ✍️ Answer Evaluator
-- Evaluates answers like examiner
-
-### 📅 Study Planner
-- Creates timetable based on days left
-
-### 🧠 Weakness Detector
-- Identifies weak topics
-
-### ✨ Answer Enhancer
-- Converts answers into full-mark format
-
-### 📊 Diagram Generator
-- Adds diagrams to answers
+ExamAce AI is an AI-powered smart study assistant designed to help students prepare efficiently for exams through intelligent notes generation, PYQ analysis, study planning, answer evaluation, and interactive revision tools.
 
 ---
 
-## 🎥 Demo
-(Add your video link here)
+✨ Features
+
+📘 Smart Notes Generator
+
+- Generate structured exam-ready notes for any topic or syllabus
+- Includes:
+  - Headings / Subheadings
+  - Bullet Points
+  - Memory Tricks
+  - Exam Tips
+  - Diagrams / Visual Representations
+  - Examples
 
 ---
 
-## 🔥 Why This Project
-This project solves real student problems:
-- Notes making
-- Exam preparation
-- Answer writing
-- Time management
----
+🧠 Interactive Learning Tools
 
-## 🧪 Sample Outputs (Demo)
-
-### 📘 Topic → Notes
-
-**Input:**
-Explain IP Addressing
-
-**Output:**
-- Definition: IP Address is a unique identifier for devices on a network
-- Types:
-  - Classful Addressing
-  - Classless Addressing
-- Diagram:
-  IP Address
-   ├── Network ID
-   └── Host ID
+- Generate MCQs with answer checking
+- Generate Important Questions
+- Explain Further to expand notes deeply
+- Flashcards
+- Revision Sheets
+- Mnemonics Generator
 
 ---
 
-### 📊 PYQ Analyzer
+🎓 Teacher Mode / Chatbot
 
-**Input:**
-List of previous year questions
-
-**Output:**
-- Unit 1: IP Addressing (10 questions)
-- Unit 2: Subnetting (15 questions) 🔥 Most Important
-- Unit 3: Routing (5 questions)
+- Ask doubts conversationally
+- Get explanations like a real teacher
+- Ask topic-specific follow-up questions
 
 ---
 
-### 📅 Study Planner
+📊 PYQ Analyzer
 
-**Input:**
-5 days left for exam (Computer Networks)
+Upload previous year papers (PDF/Image) and:
 
-**Output:**
-Day 1: IP Addressing + Notes  
-Day 2: Subnetting + Practice  
-Day 3: Routing + PYQs  
-Day 4: Revision  
-Day 5: Mock Test  
+- Extract topic-wise relevant PYQs
+- Categorize Direct / Related Questions
+- Frequency Analysis (High / Medium / Low)
+- Smart Topic Matching
 
 ---
 
-### ✍️ Answer Evaluation
+📅 Smart Study Planner
 
-**Input:**
-Student answer
+Generate personalized study schedules based on:
 
-**Output:**
-- Marks: 6/10  
-- Missing points: Classless addressing  
-- Improvement: Add diagram and examples  
+- Pending tasks
+- Exam syllabus
+- Days remaining
+- Daily available study hours
 
 ---
 
-### ✨ Answer Enhancement
+✍️ Answer Evaluator
 
-**Input:**
-Rough answer
+- Evaluate descriptive answers
+- Get:
+  - Marks Awarded
+  - Feedback
+  - Deductions
+  - Improvements
+  - Model Full-Mark Answer
 
-**Output:**
-- Structured answer with headings  
-- Added keywords  
-- Diagram included  
-- Ready for full marks  
+---
+
+📚 History & Productivity
+
+- Save important sessions
+- Searchable history sidebar
+- Pin/Delete history items
+- Export output as PDF
+
+---
+
+🛠 Tech Stack
+
+Frontend
+
+- HTML
+- CSS
+- Vanilla JavaScript
+
+Backend
+
+- Node.js
+- Express.js
+
+AI / APIs
+
+- Groq API (Llama Models)
+
+OCR / File Processing
+
+- Tesseract.js
+- pdf-parse
+- pdf2pic
+- Multer
+
+---
+
+📂 Project Structure
+
+ExamAce-AI/
+│
+├── index.html
+├── server.js
+├── package.json
+├── .env
+│
+├── uploads/
+├── ocr-temp/
+└── README.md
+
+---
+
+⚙️ Installation & Setup
+
+1. Clone Repository
+
+git clone https://github.com/your-username/examace-ai.git
+cd examace-ai
+
+2. Install Dependencies
+
+npm install
+
+3. Create ".env"
+
+GROQ_API_KEY=your_groq_api_key_here
+
+4. Run Server
+
+node server.js
+
+5. Open Frontend
+
+Open "index.html" in browser.
+
+---
+
+📌 Future Improvements
+
+- Authentication / User Accounts
+- Cloud Sync for Notes History
+- Markdown / Rich Text Export
+- Dark / Light Theme Toggle
+- Spaced Repetition Revision System
+- Performance Analytics Dashboard
+- Mobile Responsive UI
+
+---
+
+🏆 Use Cases
+
+- Semester Exam Preparation
+- Competitive Exam Revision
+- Assignment Help
+- Quick Concept Learning
+- PYQ Trend Analysis
+
+---
+
+📜 License
+
+MIT License
+
+---
+
+👨‍💻 Author
+
+Built with ❤️ by Navleen Kaur
+
+---
